@@ -146,6 +146,21 @@ df_model[numerical_cols_to_scale] = scaler.fit_transform(df_model[numerical_cols
 
 ---
 
+
+## 🧩 Summary of Challenges and Solutions
+
+| **Challenge** | **Description** | **Solution Implemented** |
+|----------------|-----------------|---------------------------|
+| **Inconsistent Column Names** | The churn label was not recognized due to capitalization ("Churn" vs "churn") and whitespace variations. | Added a defensive case-insensitive column detection that standardizes "Churn" to "churn". |
+| **Missing / Invalid Numeric Values** | The `TotalCharges` column contained blank strings, leading to conversion errors when casting to numeric. | Used `pd.to_numeric(errors='coerce')` to turn blanks into NaN, then imputed missing values with the median. |
+| **Duplicate Records** | Potential duplicate customer records could bias analysis. | Used `df.duplicated()` to detect and drop duplicates safely. |
+| **Outliers in Numeric Fields** | Extreme values in `MonthlyCharges` and `TotalCharges` distorted the distribution. | Applied IQR-based filtering to identify and remove rows with outliers. |
+| **Mixed Data Types** | Columns like `SeniorCitizen` were numeric but conceptually categorical (0/1). | Explicitly cast to integer and documented as categorical. |
+| **Categorical Encoding** | Non-numeric features (like `InternetService` or `Contract`) were incompatible with ML models. | Applied `pd.get_dummies()` for one-hot encoding, ensuring `drop_first=True` to avoid multicollinearity. |
+| **Scaling Differences** | Features had varying numeric ranges (`tenure`, `MonthlyCharges`, etc.). | Standardized with `StandardScaler` for consistent model training. |
+| **Formatting & Case Inconsistencies** | Categories like "Yes", " yes", and "YES" existed. | Normalized all string columns to lowercase and stripped whitespace. |
+
+
+
 ## 4. Summary of Deliverables
 
-The final deliverable of **Phase 2** is a fully preprocessed, numerical, and scaled dataset (`df_model`), prepared and validated for input into machine-learning models.
